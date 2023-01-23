@@ -1,10 +1,11 @@
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.scss';
-import React from 'react';
-
-const { readdir } = window.require('fs/promises');
+import React, { useEffect } from 'react';
 
 export default function App() {
+  useEffect(() => {
+    //dialog.showOpenDialog({ title: 'Test' });
+  }, []);
   return (
     <Router>
       <Routes>
