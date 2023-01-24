@@ -5,7 +5,6 @@ import { CosmLayout } from "./pages/layout/layout";
 import { ProjectsPage } from "./pages/projects";
 import { ThemeDark } from "./themes/dark";
 import { LocalizationProvider } from "./utils/LocalizationProvider";
-import { useEffect } from "react";
 
 export default function App() {
     return (

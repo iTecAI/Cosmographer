@@ -1,6 +1,10 @@
-const expose: {
+export const expose: {
     call: (module: "fs" | "dialog", member: string, args?: any[]) => any;
     get: (module: "fs" | "dialog", member: string) => any;
+    watch: (
+        path: string,
+        listener: (event: string, filename: string) => void
+    ) => void;
 } = (window as any).electron.expose;
 
 function isError(o: any): o is { error: Error } {

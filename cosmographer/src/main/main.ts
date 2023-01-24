@@ -145,6 +145,18 @@ const createWindow = async () => {
     // Remove this if your app does not use auto updates
     // eslint-disable-next-line
     //new AppUpdater();
+
+    ipcMain.on("cosm-watch", async (event, path: string) => {
+        fs.watch(path, { encoding: "utf8" }, (event, filename) => {
+            if (mainWindow) {
+                mainWindow.webContents.send(
+                    `cosm-watch-update:${path}`,
+                    event,
+                    filename
+                );
+            }
+        });
+    });
 };
 
 /**

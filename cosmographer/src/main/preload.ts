@@ -13,6 +13,17 @@ const electronHandler = {
         get(module: "fs" | "dialog", member: string) {
             return ipcRenderer.sendSync("cosm-get", module, member);
         },
+        watch(
+            path: string,
+            listener: (event: string, filename: string) => void
+        ) {
+            ipcRenderer.send("cosm-watch", path);
+            ipcRenderer.on(
+                `cosm-watch-update:${path}`,
+                (event, eventType: string, filename: string) =>
+                    listener(eventType, filename)
+            );
+        },
     },
 };
 
