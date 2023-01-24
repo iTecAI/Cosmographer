@@ -4,17 +4,21 @@ import "./App.scss";
 import { CosmLayout } from "./pages/layout/layout";
 import { ProjectsPage } from "./pages/projects";
 import { ThemeDark } from "./themes/dark";
+import { LocalizationProvider } from "./utils/LocalizationProvider";
+import { useEffect } from "react";
 
 export default function App() {
     return (
         <ConfigProvider theme={ThemeDark}>
-            <Router>
-                <Routes>
-                    <Route path="/" element={<CosmLayout />}>
-                        <Route index element={<ProjectsPage />} />
-                    </Route>
-                </Routes>
-            </Router>
+            <LocalizationProvider language="en">
+                <Router>
+                    <Routes>
+                        <Route path="/" element={<CosmLayout />}>
+                            <Route index element={<ProjectsPage />} />
+                        </Route>
+                    </Routes>
+                </Router>
+            </LocalizationProvider>
         </ConfigProvider>
     );
 }

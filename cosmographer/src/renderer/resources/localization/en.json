@@ -1,6 +1,7 @@
 {
     "name": "Cosmographer",
     "project": {
-        "create": "New Project"
+        "create": "New Project",
+        "load": "Load Project"
     }
 }

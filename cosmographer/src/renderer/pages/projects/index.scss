@@ -3,4 +3,26 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+
+    img {
+        width: calc(min(384px, 80vw) - min(128px, 20vw));
+        height: auto;
+        pointer-events: none;
+        user-select: none;
+        margin-left: calc(min(128px, 20vw) / 2);
+        opacity: 0.8;
+    }
+
+    .project-menu {
+        width: min(384px, 80vw);
+    }
+
+    .app-name {
+        display: inline-block;
+        width: 100%;
+        height: auto;
+        text-align: center;
+        margin-top: 8px;
+        font-weight: 300;
+    }
 }
