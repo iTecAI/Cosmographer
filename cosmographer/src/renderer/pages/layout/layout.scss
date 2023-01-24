@@ -5,4 +5,32 @@
     position: absolute;
     top: 0px;
     left: 0px;
+
+    .app-header {
+        position: relative;
+        padding: 12px;
+        box-sizing: border-box;
+
+        .ant-space {
+            position: relative;
+            display: inline-block;
+            height: 100%;
+            width: fit-content;
+
+            .ant-space-item {
+                display: inline-block;
+                height: 100%;
+                width: fit-content;
+                margin-right: 8px;
+
+                img {
+                    position: relative;
+                    width: auto;
+                    height: 100%;
+                    user-select: none;
+                    pointer-events: none;
+                }
+            }
+        }
+    }
 }

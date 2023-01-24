@@ -8,17 +8,15 @@ const LANGUAGES = {
 
 const LocalizationContext = createContext<typeof i18next.t | null>(null);
 
+i18next.init({
+    lng: "en",
+    resources: LANGUAGES,
+});
+
 export function LocalizationProvider(props: {
     language: keyof typeof LANGUAGES;
     children?: React.ReactNode | React.ReactNode[];
 }) {
-    useEffect(() => {
-        i18next.init({
-            lng: props.language,
-            resources: LANGUAGES,
-        });
-    }, []);
-
     useEffect(() => {
         if (i18next.isInitialized) {
             i18next.changeLanguage(props.language);
