@@ -21,3 +21,15 @@ export function watch(
 ): void {
     expose.watch(path, listener);
 }
+
+export function mkdir(path: string, recursive?: boolean): void {
+    call("fs", "mkdirSync", [path, { recursive }]);
+}
+
+export function exists(path: string): boolean {
+    return call("fs", "existsSync", [path]);
+}
+
+export function stat(path: string): any {
+    return call("fs", "lstatSync", [path, { throwIfNoEntry: false }]);
+}

@@ -15,6 +15,7 @@ import log from "electron-log";
 import MenuBuilder from "./menu";
 import { resolveHtmlPath } from "./util";
 import * as fs from "fs";
+import * as os from "os";
 
 class AppUpdater {
     constructor() {
@@ -28,13 +29,28 @@ let mainWindow: BrowserWindow | null = null;
 
 ipcMain.on(
     "cosm-call",
-    async (event, module: "fs" | "dialog", member: string, args: any[]) => {
+    async (
+        event,
+        module: "fs" | "dialog" | "os",
+        member: string,
+        args: any[]
+    ) => {
         try {
             switch (module) {
                 case "fs":
-                    event.returnValue = (fs as any)[member](...args);
+                    if (member === "lstatSync") {
+                        const result = (fs as any)[member](...args);
+                        result.directory = result.isDirectory();
+                        result.file = result.isFile();
+                        event.returnValue = result;
+                    } else {
+                        event.returnValue = (fs as any)[member](...args);
+                    }
+
                 case "dialog":
                     event.returnValue = (dialog as any)[member](...args);
+                case "os":
+                    event.returnValue = (os as any)[member](...args);
                 default:
                     event.returnValue = {
                         error: `${module} is not recognized`,

@@ -3,6 +3,8 @@ import { Outlet } from "react-router-dom";
 import "./layout.scss";
 import Icon from "../../resources/assets/icon.png";
 import { useTranslation } from "../../utils/LocalizationProvider";
+import { useWatch } from "renderer/utils/WatchProvider";
+import { useEffect } from "react";
 
 const { Content, Header } = Layout;
 

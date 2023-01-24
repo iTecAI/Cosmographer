@@ -2,7 +2,7 @@ import { contextBridge, ipcRenderer } from "electron";
 
 const electronHandler = {
     expose: {
-        call(module: "fs" | "dialog", member: string, args?: any[]) {
+        call(module: "fs" | "dialog" | "os", member: string, args?: any[]) {
             return ipcRenderer.sendSync(
                 "cosm-call",
                 module,
@@ -10,7 +10,7 @@ const electronHandler = {
                 args ?? []
             );
         },
-        get(module: "fs" | "dialog", member: string) {
+        get(module: "fs" | "dialog" | "os", member: string) {
             return ipcRenderer.sendSync("cosm-get", module, member);
         },
         watch(
@@ -23,6 +23,9 @@ const electronHandler = {
                 (event, eventType: string, filename: string) =>
                     listener(eventType, filename)
             );
+        },
+        removeWatch(path: string) {
+            ipcRenderer.removeAllListeners(`cosm-watch-update:${path}`);
         },
     },
 };
