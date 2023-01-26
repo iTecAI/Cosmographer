@@ -45,7 +45,6 @@ export function useConfig(): [
 
     useMemo(() => {
         const defSet = defaultsDeep({...config}, DEFAULT_CONFIG);
-        console.log(defSet)
         setConfig(defSet);
     }, [])
 

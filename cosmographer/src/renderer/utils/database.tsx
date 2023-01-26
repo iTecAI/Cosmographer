@@ -70,5 +70,5 @@ export function useDB<T>(
         context[1](path);
     }, [path]);
 
-    return [context[0][path][0], (update) => context[1](path, update)]
+    return [(context[0][path] ?? [{}])[0], (update) => context[1](path, update)]
 }
