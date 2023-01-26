@@ -7,6 +7,7 @@ import {
 } from "react";
 import { useDB } from "./database";
 import { dataDirectory } from "./utilFuncs";
+import { join } from "path";
 
 export type UserConfig = {
     theme: "dark" | "light";
@@ -21,17 +22,10 @@ const DATA_DIR = dataDirectory();
 export function UserConfigProvider(props: {
     children?: ReactNode | ReactNode[];
 }) {
-    const [data, execute] = useDB(DATA_DIR, "settings.json");
+    const [data, setData] = useDB<UserConfig>(join(DATA_DIR, "settings.json"));
 
     return (
-        <UserConfigContext.Provider
-            value={[
-                data,
-                (newConfig) => {
-                    execute((_db) => (_db.data = newConfig));
-                },
-            ]}
-        >
+        <UserConfigContext.Provider value={[data, (newConfig) => {}]}>
             {props.children}
         </UserConfigContext.Provider>
     );

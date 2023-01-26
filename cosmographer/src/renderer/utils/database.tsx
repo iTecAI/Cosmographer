@@ -1,19 +1,18 @@
-import { exists, readFile, watch, writeFile } from "./ipc/fs";
+import { readFile, writeFile, exists, mkdir } from "./ipc/fs";
 import { Low } from "lowdb";
-import { join } from "path";
-import { isEqual } from "lodash";
-import {
-    ReactNode,
-    createContext,
-    useContext,
-    useEffect,
-    useMemo,
-    useState,
-} from "react";
-import { useWatch } from "./WatchProvider";
+import { isEqual, set } from "lodash";
+import { useEffect, useState } from "react";
+import { dirname } from "path";
 
 class CosmJsonAdapter<T = any> {
-    constructor(private path: string) {}
+    constructor(public path: string) {
+        if (!exists(this.path)) {
+            if (!exists(dirname(this.path))) {
+                mkdir(dirname(this.path), true);
+            }
+            writeFile(this.path, JSON.stringify({}));
+        }
+    }
 
     async read(): Promise<T> {
         return JSON.parse(readFile(this.path));
@@ -24,101 +23,47 @@ class CosmJsonAdapter<T = any> {
     }
 }
 
-class CosmDB<T = any> {
-    private adapter: CosmJsonAdapter;
-    private db: Low<T>;
-    private path: string;
-    public data: T | {};
-    constructor(...paths: string[]) {
-        this.path = join(...paths);
-        if (!exists(this.path)) {
-            writeFile(this.path, "{}");
-        }
-        this.adapter = new CosmJsonAdapter<T>(this.path);
-        this.db = new Low<T>(this.adapter);
-        this.data = {};
-        this.db.read().then(() => {
-            this.data = this.db.data ?? {};
-        });
-    }
-
-    public async execute(executor: (db: Low<T>) => any): Promise<any> {
-        await this.db.read();
-        this.data = this.db.data ?? {};
-        const result = executor(this.db);
-        this.db.data = this.data as T;
-        await this.db.write();
-        return result;
-    }
-
-    public async refresh(): Promise<T | {}> {
-        await this.db.read();
-        this.data = this.db.data ?? {};
-        return this.data;
-    }
-}
-
-const DBContext = createContext<
-    [{ [key: string]: CosmDB }, (...paths: string[]) => void]
->([{}, (...paths: string[]) => {}]);
-
-export function CosmDBProvider(props: { children?: ReactNode | ReactNode[] }) {
-    const [dbs, setDbs] = useState<{ [key: string]: CosmDB }>({});
-
-    return (
-        <DBContext.Provider
-            value={[
-                dbs,
-                (...paths: string[]) => {
-                    if (!Object.keys(dbs).includes(join(...paths))) {
-                        setDbs({
-                            ...dbs,
-                            [join(...paths)]: new CosmDB(...paths),
-                        });
-                    }
-                },
-            ]}
-        >
-            {props.children}
-        </DBContext.Provider>
+export function useDB<T>(
+    path: string
+): [T | {}, (_data: any, ..._path: string[]) => void] {
+    const [data, setData] = useState<T | {}>({});
+    const [low, setLow] = useState<Low<T | {}>>(
+        new Low(new CosmJsonAdapter<T | {}>(path))
     );
-}
 
-export function useDB<T = any>(
-    ...paths: string[]
-): [T | {}, typeof CosmDB.prototype.execute] {
-    const [dbs, activate] = useContext(DBContext);
-    const [path, setPath] = useState<string>(join(...paths));
-    const [data, setData] = useState<T | null>(null);
-
-    const watched = useWatch(...paths);
-
-    useMemo(() => {
-        setPath(join(...paths));
-        if (!Object.keys(dbs).includes(path)) {
-            activate(path);
-        }
-    }, [paths]);
-
-    useMemo(() => {
-        if (path && dbs[path]) {
-            dbs[path].refresh().then((value) => {
-                if (!isEqual(value, data)) {
-                    setData(value);
-                }
+    useEffect(() => {
+        if (!isEqual((low.adapter as CosmJsonAdapter<T | {}>).path, path)) {
+            low.write().then(() => {
+                const newLow = new Low(new CosmJsonAdapter<T | {}>(path));
+                newLow.read().then(() => {
+                    setLow(newLow);
+                    setData(newLow.data ?? {});
+                });
             });
         }
-    }, [watched]);
+    }, [path]);
+
+    useEffect(() => {
+        if (!isEqual(data, low.data)) {
+            low.data = data;
+            low.write();
+        }
+    }, [data]);
+
+    useEffect(() => {
+        low.read().then(() => setData(low.data ?? {}));
+    }, []);
 
     return [
-        data ?? {},
-        async (executor) => {
-            if (!(dbs && dbs[path])) {
-                return {};
+        data,
+        (_data, ..._path) => {
+            if (_path.length > 0) {
+                const newData = { ...data };
+                set(newData, _path, _data);
+                setData(newData);
+            } else {
+                setData({ ..._data });
             }
-            const result = await dbs[path].execute(executor);
-            setData(dbs[path].data);
-            return result;
         },
     ];
 }
