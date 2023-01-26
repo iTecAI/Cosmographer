@@ -2,15 +2,19 @@ import {
     ReactNode,
     createContext,
     useContext,
-    useEffect,
-    useState,
+    useMemo,
 } from "react";
 import { useDB } from "./database";
 import { dataDirectory } from "./utilFuncs";
 import { join } from "path";
+import { defaultsDeep } from "lodash";
 
 export type UserConfig = {
     theme: "dark" | "light";
+};
+
+const DEFAULT_CONFIG: Partial<UserConfig> = {
+    theme: "dark"
 };
 
 const UserConfigContext = createContext<
@@ -22,10 +26,12 @@ const DATA_DIR = dataDirectory();
 export function UserConfigProvider(props: {
     children?: ReactNode | ReactNode[];
 }) {
-    const [data, setData] = useDB<UserConfig>(join(DATA_DIR, "settings.json"));
+    const [data, update] = useDB<UserConfig>(join(DATA_DIR, "settings.json"));
 
     return (
-        <UserConfigContext.Provider value={[data, (newConfig) => {}]}>
+        <UserConfigContext.Provider value={[data, (newConfig) => {
+            update(newConfig);
+        }]}>
             {props.children}
         </UserConfigContext.Provider>
     );
@@ -36,5 +42,12 @@ export function useConfig(): [
     (config: Partial<UserConfig>) => void
 ] {
     const [config, setConfig] = useContext(UserConfigContext);
+
+    useMemo(() => {
+        const defSet = defaultsDeep({...config}, DEFAULT_CONFIG);
+        console.log(defSet)
+        setConfig(defSet);
+    }, [])
+
     return [config, setConfig];
 }

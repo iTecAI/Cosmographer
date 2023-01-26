@@ -1,7 +1,7 @@
 import { readFile, writeFile, exists, mkdir } from "./ipc/fs";
 import { Low } from "lowdb";
-import { isEqual, set } from "lodash";
-import { useEffect, useState } from "react";
+import { isEqual, set, merge } from "lodash";
+import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from "react";
 import { dirname } from "path";
 
 class CosmJsonAdapter<T = any> {
@@ -23,47 +23,52 @@ class CosmJsonAdapter<T = any> {
     }
 }
 
+const DBContext = createContext<[{[path: string]: [any, Low<any>]}, (path: string, data?: any) => any]>([{}, (path, data) => {}]);
+
+export function DBContextProvider(props: {children: ReactNode | ReactNode[]}) {
+    const [dbs, setDbs] = useState<{[path: string]: [any, Low<any>]}>({});
+
+    return <DBContext.Provider value={[dbs, (path, data) => {
+        if (!Object.keys(dbs).includes(path)) {
+            const newLow = new Low(new CosmJsonAdapter<any>(path));
+            newLow.read().then(() => {
+                if (!data) {
+                    setDbs({...dbs, [path]: [{...newLow.data}, newLow]});
+                } else {
+                    const newDbs = {...dbs};
+                    newDbs[path] = [{...newLow.data}, newLow];
+                    merge(newDbs[path][0], data);
+                    newDbs[path][1].data = {...newDbs[path][0]};
+                    newDbs[path][1].write().then(() => {
+                        setDbs(newDbs);
+                    })
+                }
+            })
+        } else {
+            if (data) {
+                const newDbs = {...dbs};
+                merge(newDbs[path][0], data);
+                newDbs[path][1].data = {...newDbs[path][0]};
+                newDbs[path][1].write().then(() => {
+                    if (!isEqual(newDbs[path][0], dbs[path][0])) {
+                        setDbs(newDbs);
+                    }
+                })
+            }
+        }
+    }]}>
+        {props.children}
+    </DBContext.Provider>
+}
+
 export function useDB<T>(
     path: string
-): [T | {}, (_data: any, ..._path: string[]) => void] {
-    const [data, setData] = useState<T | {}>({});
-    const [low, setLow] = useState<Low<T | {}>>(
-        new Low(new CosmJsonAdapter<T | {}>(path))
-    );
+): [T | {}, (update: any) => void] {
+    const context = useContext(DBContext);
 
-    useEffect(() => {
-        if (!isEqual((low.adapter as CosmJsonAdapter<T | {}>).path, path)) {
-            low.write().then(() => {
-                const newLow = new Low(new CosmJsonAdapter<T | {}>(path));
-                newLow.read().then(() => {
-                    setLow(newLow);
-                    setData(newLow.data ?? {});
-                });
-            });
-        }
+    useMemo(() => {
+        context[1](path);
     }, [path]);
 
-    useEffect(() => {
-        if (!isEqual(data, low.data)) {
-            low.data = data;
-            low.write();
-        }
-    }, [data]);
-
-    useEffect(() => {
-        low.read().then(() => setData(low.data ?? {}));
-    }, []);
-
-    return [
-        data,
-        (_data, ..._path) => {
-            if (_path.length > 0) {
-                const newData = { ...data };
-                set(newData, _path, _data);
-                setData(newData);
-            } else {
-                setData({ ..._data });
-            }
-        },
-    ];
+    return [context[0][path][0], (update) => context[1](path, update)]
 }

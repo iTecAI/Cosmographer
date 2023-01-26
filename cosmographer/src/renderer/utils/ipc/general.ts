@@ -18,7 +18,7 @@ export function call(
     args?: any[]
 ): any {
     const result = expose.call(module, member, args);
-    if (isError(result)) {
+    if (result && isError(result)) {
         throw result.error;
     }
     return result;
