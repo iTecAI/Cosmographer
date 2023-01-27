@@ -1,28 +1,98 @@
-.project-menu-root {
+.projects-page-root {
+    display: inline-block;
+    width: min(512px, 80%);
+    height: 80vh;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    padding: 16px;
 
-    img {
-        width: calc(min(384px, 80vw) - min(128px, 20vw));
-        height: auto;
-        pointer-events: none;
-        user-select: none;
-        margin-left: calc(min(128px, 20vw) / 2);
-        opacity: 0.8;
-    }
+    .MuiStack-root {
+        height: 100%;
 
-    .project-menu {
-        width: min(384px, 80vw);
-    }
+        .logo {
+            width: 50%;
+            height: auto;
+            margin-left: 25%;
+            pointer-events: none;
+            user-select: none;
+        }
 
-    .app-name {
-        display: inline-block;
-        width: 100%;
-        height: auto;
-        text-align: center;
-        margin-top: 8px;
-        font-weight: 300;
+        .project-box {
+            display: inline-block;
+            width: 100%;
+            height: calc(100% - (0.5 * min(512px, 80vw)));
+            padding: 8px;
+            position: relative;
+            overflow: hidden;
+
+            .recent-title {
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                display: inline-block;
+                width: 100%;
+                height: 40px;
+                padding: 8px;
+                border-radius: 0px;
+
+                span {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    font-size: 16px;
+                    width: fit-content;
+                    white-space: nowrap;
+                }
+            }
+
+            .recent-list {
+                position: absolute;
+                top: 48px;
+                left: 8px;
+                display: inline-block;
+                width: calc(100% - 16px);
+                height: calc(100% - 104px);
+                background-color: #00000033;
+            }
+
+            .inputs {
+                position: absolute;
+                display: inline-block;
+                width: calc(100% - 16px);
+                height: fit-content;
+                left: 8px;
+                bottom: 8px;
+
+                .folder-input {
+                    position: relative;
+                    display: inline-block;
+                    width: calc(100% - 100px);
+                    margin-right: 8px;
+                    height: auto;
+
+                    .MuiInputBase-root {
+                        width: 100%;
+                        padding-right: 4px;
+                    }
+
+                    .MuiButton-root {
+                        width: 32px;
+                        min-width: 32px;
+
+                        svg {
+                            transform: scale(1.5);
+                        }
+                    }
+                }
+
+                .new-btn {
+                    padding-top: 7.5px;
+                    padding-bottom: 7.5px;
+                }
+            }
+        }
     }
 }

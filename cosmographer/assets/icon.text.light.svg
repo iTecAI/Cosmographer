@@ -14,6 +14,7 @@
    inkscape:export-ydpi="96"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
   <sodipodi:namedview
@@ -28,7 +29,7 @@
      inkscape:document-units="mm"
      showgrid="false"
      inkscape:zoom="2.1946698"
-     inkscape:cx="122.79752"
+     inkscape:cx="231.01425"
      inkscape:cy="209.82656"
      inkscape:window-width="2560"
      inkscape:window-height="1398"
@@ -82,11 +83,20 @@
              d="m 102.5514,30.668364 a 15.020893,15.020891 0 0 1 3.40007,9.51576 15.020893,15.020891 0 0 1 -15.020862,15.02087 15.020893,15.020891 0 0 1 -9.29637,-3.22597 15.020893,15.020891 0 0 0 11.60999,5.49981 15.020893,15.020891 0 0 0 15.020862,-15.02087 15.020893,15.020891 0 0 0 -5.71369,-11.7896 z" />
         </g>
       </g>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.36646px;font-family:'Roboto Mono';-inkscape-font-specification:'Roboto Mono';fill:#ffffff;stroke-width:0.172651"
+         id="text551"
+         transform="rotate(180,67.452339,67.614861)"><textPath
+           xlink:href="#path1209-3-6-5"
+           id="textPath557"><tspan
+             id="tspan549"
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.36646px;font-family:'Roboto Mono';-inkscape-font-specification:'Roboto Mono';stroke-width:0.172651">COSMOGRAPHER</tspan></textPath></text>
     </g>
     <text
        xml:space="preserve"
        transform="scale(0.26458333)"
        id="text282"
-       style="white-space:pre;shape-inside:url(#rect284);display:inline;fill:#000000" />
+       style="fill:#000000;white-space:pre;shape-inside:url(#rect284)" />
   </g>
 </svg>

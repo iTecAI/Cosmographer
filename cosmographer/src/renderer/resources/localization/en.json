@@ -1,7 +1,10 @@
 {
     "name": "Cosmographer",
     "project": {
-        "create": "New Project",
-        "load": "Load Project"
+        "browser": {
+            "recent": "Recent Projects",
+            "folder-select": "Load From Folder",
+            "new": "New"
+        }
     }
 }

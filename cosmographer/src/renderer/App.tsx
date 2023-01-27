@@ -1,9 +1,9 @@
-import { ConfigProvider } from "antd";
+import { CssBaseline, ThemeProvider } from "@mui/material";
 import { MemoryRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.scss";
 import { CosmLayout } from "./pages/layout/layout";
 import { ProjectsPage } from "./pages/projects";
-import { ThemeDark } from "./themes/dark";
+import { themeDefault } from "./theme/default";
 import { DBContextProvider } from "./utils/database";
 import { LocalizationProvider } from "./utils/LocalizationProvider";
 import { UserConfigProvider } from "./utils/userConfig";
@@ -11,10 +11,11 @@ import { WatchProvider } from "./utils/WatchProvider";
 
 export default function App() {
     return (
-        <WatchProvider>
-            <DBContextProvider>
-                <UserConfigProvider>
-                    <ConfigProvider theme={ThemeDark}>
+        <ThemeProvider theme={themeDefault}>
+            <CssBaseline enableColorScheme />
+            <WatchProvider>
+                <DBContextProvider>
+                    <UserConfigProvider>
                         <LocalizationProvider language="en">
                             <Router>
                                 <Routes>
@@ -27,9 +28,9 @@ export default function App() {
                                 </Routes>
                             </Router>
                         </LocalizationProvider>
-                    </ConfigProvider>
-                </UserConfigProvider>
-            </DBContextProvider>
-        </WatchProvider>
+                    </UserConfigProvider>
+                </DBContextProvider>
+            </WatchProvider>
+        </ThemeProvider>
     );
 }
