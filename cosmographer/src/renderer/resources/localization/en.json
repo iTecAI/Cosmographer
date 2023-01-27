@@ -29,5 +29,9 @@
         "submit": "Submit",
         "create": "Create",
         "cancel": "Cancel"
+    },
+    "settings": {
+        "title": "Preferences",
+        "setting-theme": "Dark Mode"
     }
 }

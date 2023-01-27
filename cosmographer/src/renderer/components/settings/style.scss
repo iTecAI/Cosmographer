@@ -1,0 +1,33 @@
+.settings-btn {
+    position: absolute !important;
+    
+    svg {
+        transition: transform 0.5s;
+    }
+
+    &.open {
+        svg {
+            transform: rotate(-45deg);
+        }
+    }
+}
+
+.settings-menu > .MuiPaper-root {
+    transform: translate(-32px, -32px);
+    display: inline-block;
+    width: 256px;
+    height: fit-content;
+    padding: 16px;
+    padding-top: 48px;
+    overflow: hidden;
+    padding-bottom: 8px;
+
+    .settings-title {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        padding: 8px;
+        border-radius: 0px;
+    }
+}

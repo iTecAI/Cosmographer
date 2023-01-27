@@ -4,12 +4,12 @@
     left: 0px;
     display: inline-block;
     width: 100vw;
-        height: 100vh;
-        overflow: hidden;
+    height: 100vh;
+    overflow: hidden;
 }
 
 * {
-    input {
+    .MuiInputBase-root input {
         opacity: 0.8;
         transition: opacity 0.1s;
 
