@@ -4,6 +4,7 @@ import { useTranslation } from "../../utils/LocalizationProvider";
 import {
     Box,
     Button,
+    IconButton,
     InputAdornment,
     Paper,
     TextField,
@@ -12,14 +13,43 @@ import {
     useTheme,
 } from "@mui/material";
 import { Stack } from "@mui/system";
-import { MdAdd, MdCheck, MdFolder } from "react-icons/md";
-import { useEffect, useState } from "react";
+import { MdAdd, MdCheck, MdFolder, MdOpenInNew } from "react-icons/md";
+import { useEffect, useMemo, useState } from "react";
 import { showOpenDialog } from "../../utils/ipc/dialog";
 import { exists, mkdir, writeFile } from "../../utils/ipc/fs";
 import { join } from "path";
 import { useConfig } from "../../utils/userConfig";
 import ProjectCreateDialog from "./ProjectCreateDialog";
-import { PROJECT_VERSION } from "renderer/globals";
+import { MAX_RECENT, PROJECT_VERSION } from "renderer/globals";
+import { useDB } from "renderer/utils/database";
+import { ProjectMeta } from "renderer/types/project";
+
+function RecentItem(props: { path: string }) {
+    const [name, setName] = useState<string>("");
+    const [conf] = useDB<ProjectMeta>(join(props.path, "meta.cosm.json"));
+    const theme = useTheme();
+
+    useMemo(() => {
+        setName((conf as ProjectMeta).name);
+    }, [(conf as ProjectMeta).name]);
+
+    return (
+        <Paper
+            className="recent-item"
+            sx={{ border: `1px solid ${theme.palette.background.paper}` }}
+        >
+            <Typography variant="overline" className="name">
+                {name}
+            </Typography>
+            <Typography variant="subtitle2" className="path">
+                {props.path}
+            </Typography>
+            <IconButton className="open">
+                <MdOpenInNew size={20} />
+            </IconButton>
+        </Paper>
+    );
+}
 
 export function ProjectsPage() {
     const t = useTranslation();
@@ -60,8 +90,12 @@ export function ProjectsPage() {
                             {t("project.browser.recent")}
                         </Typography>
                     </Paper>
-                    <Paper className="recent-list" variant="outlined"></Paper>
-                    <Box className="inputs">
+                    <Paper className="recent-list" variant="outlined">
+                        {(conf.recent ?? []).filter(exists).map((p) => (
+                            <RecentItem path={p} key={p} />
+                        ))}
+                    </Paper>
+                    <Stack className="inputs" spacing={1} direction="row">
                         <Tooltip
                             open={loadStatus === null ? false : tt}
                             title={
@@ -76,6 +110,7 @@ export function ProjectsPage() {
                             <TextField
                                 color={loadStatus ?? undefined}
                                 size="small"
+                                fullWidth
                                 className="folder-input"
                                 label={t("project.browser.folder-select.label")}
                                 placeholder={
@@ -148,7 +183,7 @@ export function ProjectsPage() {
                         >
                             {t("project.browser.new")}
                         </Button>
-                    </Box>
+                    </Stack>
                 </Paper>
             </Stack>
             <ProjectCreateDialog
@@ -167,12 +202,19 @@ export function ProjectsPage() {
                         })
                     );
                     if (!(conf.recent ?? []).includes(join(parent, name))) {
-                        setConf({
+                        const newConf = {
                             recent: [
-                                ...(conf.recent ?? []),
                                 join(parent, name),
-                            ],
-                        });
+                                ...(conf.recent ?? []),
+                            ].filter(exists),
+                        };
+                        if (newConf.recent.length > MAX_RECENT) {
+                            newConf.recent = newConf.recent.slice(
+                                0,
+                                MAX_RECENT
+                            );
+                        }
+                        setConf(newConf);
                     }
                 }}
             />

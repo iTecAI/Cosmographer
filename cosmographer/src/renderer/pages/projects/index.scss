@@ -56,6 +56,38 @@
                 width: calc(100% - 16px);
                 height: calc(100% - 108px);
                 background-color: #00000033;
+                padding: 8px;
+
+                .recent-item {
+                    position: relative;
+                    overflow: hidden;
+                    padding: 8px;
+                    padding-right: 48px;
+                    padding-top: 0px;
+
+                    .name {
+                        font-size: 16px;
+                        white-space: nowrap;
+                        max-width: calc(100% - 40px);
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
+
+                    .path {
+                        opacity: 0.6;
+                        white-space: nowrap;
+                        max-width: calc(100% - 40px);
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
+
+                    .open {
+                        position: absolute;
+                        top: 50%;
+                        right: 16px;
+                        transform: translate(0, -50%);
+                    }
+                }
             }
 
             .inputs {
@@ -65,13 +97,12 @@
                 height: fit-content;
                 left: 8px;
                 bottom: 8px;
+                white-space: nowrap;
 
                 .folder-input {
                     position: relative;
                     display: inline-block;
-                    width: calc(100% - 100px);
-                    margin-right: 8px;
-                    height: auto;
+                    width: calc(80% - 8px);
 
                     .MuiInputBase-root {
                         width: 100%;
@@ -89,6 +120,7 @@
                 }
 
                 .new-btn {
+                    width: 20%;
                     padding-top: 7.5px;
                     padding-bottom: 7.5px;
                 }
