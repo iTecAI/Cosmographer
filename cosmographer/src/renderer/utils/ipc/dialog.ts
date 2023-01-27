@@ -25,7 +25,7 @@ type OpenDialogOptions = {
 
 export async function showOpenDialog(
     options?: OpenDialogOptions
-): Promise<{ canceled: boolean; filePaths: string[]; bookmarks?: string[] }> {
+): Promise<string[]> {
     const result = call("dialog", "showOpenDialogSync", [options]);
     return result;
 }

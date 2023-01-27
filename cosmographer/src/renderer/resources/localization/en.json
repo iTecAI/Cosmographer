@@ -3,7 +3,16 @@
     "project": {
         "browser": {
             "recent": "Recent Projects",
-            "folder-select": "Load From Folder",
+            "folder-select": {
+                "label": "Load from Folder",
+                "placeholder": "/path/to/folder",
+                "dialog": "Select Cosmographer Project Folder",
+                "status": {
+                    "warning": "Folder is not a Cosmographer project.",
+                    "error": "Folder not found.",
+                    "success": "Folder ready to be loaded!"
+                }
+            },
             "new": "New"
         }
     }

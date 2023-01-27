@@ -7,3 +7,14 @@
         height: 100vh;
         overflow: hidden;
 }
+
+* {
+    input {
+        opacity: 0.8;
+        transition: opacity 0.1s;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+}
