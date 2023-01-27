@@ -9,13 +9,7 @@ import { dataDirectory } from "./utilFuncs";
 import { join } from "path";
 import { defaultsDeep } from "lodash";
 
-export type UserConfig = {
-    theme: "dark" | "light";
-};
-
-const DEFAULT_CONFIG: Partial<UserConfig> = {
-    theme: "dark"
-};
+import { UserConfig, DEFAULT_CONFIG } from "renderer/types/userconfig";
 
 const UserConfigContext = createContext<
     [Partial<UserConfig>, (config: Partial<UserConfig>) => void]

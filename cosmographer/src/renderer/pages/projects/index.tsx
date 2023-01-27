@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { showOpenDialog } from "../../utils/ipc/dialog";
 import { exists } from "../../utils/ipc/fs";
 import { join } from "path";
+import { useConfig } from "../../utils/userConfig";
 
 export function ProjectsPage() {
     const t = useTranslation();
@@ -27,6 +28,8 @@ export function ProjectsPage() {
         "error" | "warning" | "success" | null
     >(null);
     const [tt, setTt] = useState<boolean>(false);
+
+    const { recent } = useConfig()[0];
 
     useEffect(() => {
         if (loadDir.length === 0) {
