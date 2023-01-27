@@ -14,6 +14,20 @@
                 }
             },
             "new": "New"
+        },
+        "create": {
+            "title": "New Project",
+            "name": "Project Name",
+            "name-placeholder": "New Project",
+            "folder": "Project Parent Folder",
+            "folder-placeholder": "/path/to/folder",
+            "folder-error": "Folder does not exist.",
+            "folder-dialog": "Select Parent Folder"
         }
+    },
+    "general": {
+        "submit": "Submit",
+        "create": "Create",
+        "cancel": "Cancel"
     }
 }

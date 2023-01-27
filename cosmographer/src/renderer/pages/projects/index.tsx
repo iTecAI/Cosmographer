@@ -15,9 +15,11 @@ import { Stack } from "@mui/system";
 import { MdAdd, MdCheck, MdFolder } from "react-icons/md";
 import { useEffect, useState } from "react";
 import { showOpenDialog } from "../../utils/ipc/dialog";
-import { exists } from "../../utils/ipc/fs";
+import { exists, mkdir, writeFile } from "../../utils/ipc/fs";
 import { join } from "path";
 import { useConfig } from "../../utils/userConfig";
+import ProjectCreateDialog from "./ProjectCreateDialog";
+import { PROJECT_VERSION } from "renderer/globals";
 
 export function ProjectsPage() {
     const t = useTranslation();
@@ -29,7 +31,8 @@ export function ProjectsPage() {
     >(null);
     const [tt, setTt] = useState<boolean>(false);
 
-    const { recent } = useConfig()[0];
+    const [conf, setConf] = useConfig();
+    const [creating, setCreating] = useState<boolean>(false);
 
     useEffect(() => {
         if (loadDir.length === 0) {
@@ -116,8 +119,8 @@ export function ProjectsPage() {
                                                                 "promptToCreate",
                                                             ],
                                                         }).then((value) => {
-                                                            console.log(value);
                                                             if (
+                                                                value &&
                                                                 value.length > 0
                                                             ) {
                                                                 setLoadDir(
@@ -141,12 +144,38 @@ export function ProjectsPage() {
                             startIcon={<MdAdd size={24} />}
                             variant="contained"
                             className="new-btn"
+                            onClick={() => setCreating(true)}
                         >
                             {t("project.browser.new")}
                         </Button>
                     </Box>
                 </Paper>
             </Stack>
+            <ProjectCreateDialog
+                open={creating}
+                setOpen={setCreating}
+                create={(name, parent, plugins) => {
+                    if (!exists(join(parent, name))) {
+                        mkdir(join(parent, name));
+                    }
+                    writeFile(
+                        join(parent, name, "meta.cosm.json"),
+                        JSON.stringify({
+                            version: PROJECT_VERSION,
+                            name: name,
+                            plugins: plugins,
+                        })
+                    );
+                    if (!(conf.recent ?? []).includes(join(parent, name))) {
+                        setConf({
+                            recent: [
+                                ...(conf.recent ?? []),
+                                join(parent, name),
+                            ],
+                        });
+                    }
+                }}
+            />
         </Box>
     );
 }

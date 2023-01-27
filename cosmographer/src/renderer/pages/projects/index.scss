@@ -96,3 +96,25 @@
         }
     }
 }
+
+.project-create {
+    .parent-input {
+        position: relative;
+        display: inline-block;
+        height: auto;
+
+        .MuiInputBase-root {
+            width: 100%;
+            padding-left: 8px;
+        }
+
+        .MuiButton-root {
+            width: 32px;
+            min-width: 32px;
+
+            svg {
+                transform: scale(1.5);
+            }
+        }
+    }
+}
