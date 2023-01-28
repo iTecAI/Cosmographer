@@ -1,6 +1,7 @@
-import { join } from "path";
+import { dirname, join, resolve } from "path";
 import { homedir, platform } from "./ipc/os";
-import { exists, mkdir } from "./ipc/fs";
+import { exists, mkdir, readFile } from "./ipc/fs";
+import { entries, isNumber, isObject, isString } from "lodash";
 
 export function dataDirectory(): string {
     const home = homedir();
@@ -36,4 +37,50 @@ export function dataDirectory(): string {
         }
     }
     return path;
+}
+
+export function loadIncludeJson(opts: {data?: any, path?: string}): any {
+    let data: any;
+    if (!opts.data && opts.path) {
+        if (!exists(opts.path)) {
+            throw Error(`Path ${opts.path} not found`);
+        }
+        data = JSON.parse(readFile(opts.path));
+    } else {
+        data = {...opts.data};
+    }
+    
+    const expandedData: any = {};
+
+    for (const [key, val] of entries(data)) {
+        if (isString(val)) {
+            if (val.startsWith("$")) {
+                const parts = val.slice(1).split(":");
+                switch (parts[0]) {
+                    case "sub":
+                        if (exists(resolve(dirname(opts.path ?? "."), parts[1] ?? "$$NOPATH"))) {
+                            expandedData[key] = loadIncludeJson({path: resolve(dirname(opts.path ?? "."), parts[1] ?? "$$NOPATH")});
+                        } else {
+                            throw Error(`Path ${parts[1] ?? "$$NOPATH"} (${resolve(dirname(opts.path ?? "."), parts[1] ?? "$$NOPATH")}) of $sub not found`);
+                        }
+                        continue;
+                    case "raw":
+                        if (exists(resolve(dirname(opts.path ?? "."), parts[1] ?? "$$NOPATH"))) {
+                            expandedData[key] = readFile(resolve(dirname(opts.path ?? "."), parts[1] ?? "$$NOPATH"));
+                        } else {
+                            throw Error(`Path ${parts[1] ?? "$$NOPATH"} (${resolve(dirname(opts.path ?? "."), parts[1] ?? "$$NOPATH")}) of $raw not found`);
+                        }
+                        continue;
+                    default:
+                        expandedData[key] = val;
+                        continue;
+                }
+            }
+        }
+        if (isObject(val) && !isNumber(val) && !isString(val)) {
+            expandedData[key] = loadIncludeJson({path: opts.path ?? ".", data: {...val}});
+            continue;
+        }
+        expandedData[key] = val;
+    }
 }
