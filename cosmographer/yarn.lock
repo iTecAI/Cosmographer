@@ -8548,6 +8548,13 @@ react-is@^17.0.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
+react-jsonx@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/react-jsonx/-/react-jsonx-1.0.1.tgz#168c1560730795a501fa2a72f5a62295952f74e7"
+  integrity sha512-5bhtKXEYJLwnwpU3fu1+bcjMNN3Lr2QRPIGEn/z6HTT6lAjcQm4yhMRbD0dkPtLXx9vyN6zugLEBNj0/3KZEXA==
+  dependencies:
+    lodash "^4.17.21"
+
 react-refresh@^0.14.0:
   version "0.14.0"
   resolved "https://registry.yarnpkg.com/react-refresh/-/react-refresh-0.14.0.tgz#4e02825378a5f227079554d4284889354e5f553e"

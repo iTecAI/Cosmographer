@@ -1,6 +1,8 @@
 export type PluginType = "document";
 
 export type PluginManifest = {
-    name: string;
+    identifier: string;
+    displayName: string;
+    description: string;
     types: PluginType[];
 }

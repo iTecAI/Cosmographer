@@ -7,6 +7,7 @@ import { themeDefault } from "./theme/default";
 import { themeLight } from "./theme/light";
 import { DBContextProvider } from "./utils/database";
 import { LocalizationProvider } from "./utils/LocalizationProvider";
+import { PluginContextProvider } from "./utils/plugins";
 import { useConfig, UserConfigProvider } from "./utils/userConfig";
 import { WatchProvider } from "./utils/WatchProvider";
 
@@ -33,9 +34,11 @@ export default function App() {
         <WatchProvider>
             <DBContextProvider>
                 <UserConfigProvider>
-                    <LocalizationProvider language="en">
-                        <ThemeSystem />
-                    </LocalizationProvider>
+                    <PluginContextProvider>
+                        <LocalizationProvider language="en">
+                            <ThemeSystem />
+                        </LocalizationProvider>
+                    </PluginContextProvider>
                 </UserConfigProvider>
             </DBContextProvider>
         </WatchProvider>

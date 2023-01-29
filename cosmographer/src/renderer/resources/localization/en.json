@@ -22,7 +22,8 @@
             "folder": "Project Parent Folder",
             "folder-placeholder": "/path/to/folder",
             "folder-error": "Folder does not exist.",
-            "folder-dialog": "Select Parent Folder"
+            "folder-dialog": "Select Parent Folder",
+            "plugins": "Project Plugins"
         }
     },
     "general": {

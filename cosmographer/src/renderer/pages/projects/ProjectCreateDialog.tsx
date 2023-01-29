@@ -1,4 +1,6 @@
 import {
+    Autocomplete,
+    Box,
     Button,
     Dialog,
     DialogActions,
@@ -8,13 +10,20 @@ import {
     InputAdornment,
     TextField,
     Tooltip,
+    Typography,
 } from "@mui/material";
 import { Stack } from "@mui/system";
 import { useEffect, useState } from "react";
-import { MdDriveFileRenameOutline, MdFolder } from "react-icons/md";
+import {
+    MdDriveFileRenameOutline,
+    MdExtension,
+    MdFolder,
+} from "react-icons/md";
+import { PluginManifest } from "renderer/types/plugins/plugins";
 import { showOpenDialog } from "renderer/utils/ipc/dialog";
 import { exists } from "renderer/utils/ipc/fs";
 import { useTranslation } from "renderer/utils/LocalizationProvider";
+import { usePlugins } from "renderer/utils/plugins";
 
 export default function ProjectCreateDialog(props: {
     open: boolean;
@@ -27,11 +36,16 @@ export default function ProjectCreateDialog(props: {
     const [parent, setParent] = useState<string>("");
     const [parentStatus, setParentStatus] = useState<"error" | null>(null);
     const [tt, setTt] = useState<boolean>(false);
+    const plugins = usePlugins();
+    const [selectedPlugins, setSelectedPlugins] = useState<PluginManifest[]>(
+        []
+    );
 
     function close() {
         props.setOpen(false);
         setName("");
         setParent("");
+        setSelectedPlugins([]);
     }
 
     useEffect(() => {
@@ -72,6 +86,7 @@ export default function ProjectCreateDialog(props: {
                                 </InputAdornment>
                             ),
                         }}
+                        sx={{ "& input": { paddingLeft: "8px" } }}
                     />
                     <Tooltip
                         open={parentStatus === null ? false : tt}
@@ -126,6 +141,58 @@ export default function ProjectCreateDialog(props: {
                             onChange={(e) => setParent(e.target.value)}
                         />
                     </Tooltip>
+                    <Autocomplete
+                        multiple
+                        value={selectedPlugins}
+                        onChange={(event, value) => setSelectedPlugins(value)}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                label={t("project.create.plugins")}
+                                InputProps={{
+                                    ...params.InputProps,
+                                    startAdornment: (
+                                        <>
+                                            <InputAdornment
+                                                position="start"
+                                                sx={{ marginLeft: "8px" }}
+                                            >
+                                                <MdExtension size={24} />
+                                            </InputAdornment>
+                                            {params.InputProps.startAdornment}
+                                        </>
+                                    ),
+                                }}
+                            />
+                        )}
+                        renderOption={(props, option) => (
+                            <Box component="li" {...props}>
+                                <Stack spacing={0}>
+                                    <Typography
+                                        variant="h6"
+                                        sx={{
+                                            fontWeight: "normal",
+                                            fontSize: "18px",
+                                        }}
+                                    >
+                                        {option.displayName}
+                                    </Typography>
+                                    <Typography
+                                        variant="subtitle2"
+                                        sx={{
+                                            fontWeight: "400",
+                                            fontSize: "14px",
+                                            opacity: 0.6,
+                                        }}
+                                    >
+                                        {option.description}
+                                    </Typography>
+                                </Stack>
+                            </Box>
+                        )}
+                        getOptionLabel={(option) => option.displayName}
+                        options={Object.values(plugins)}
+                    />
                 </Stack>
             </DialogContent>
             <DialogActions>
@@ -135,7 +202,11 @@ export default function ProjectCreateDialog(props: {
                 <Button
                     variant="contained"
                     onClick={() => {
-                        props.create(name, parent, []);
+                        props.create(
+                            name,
+                            parent,
+                            selectedPlugins.map((v) => v.identifier)
+                        );
                         close();
                     }}
                     disabled={

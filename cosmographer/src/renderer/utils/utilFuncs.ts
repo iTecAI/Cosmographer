@@ -1,7 +1,7 @@
-import { dirname, join, resolve } from "path";
+import { dirname, join } from "path";
 import { homedir, platform } from "./ipc/os";
 import { exists, mkdir, readFile } from "./ipc/fs";
-import { entries, isNumber, isObject, isString } from "lodash";
+import { entries, isArray, isNumber, isObject, isString } from "lodash";
 
 export function dataDirectory(): string {
     const home = homedir();
@@ -47,10 +47,10 @@ export function loadIncludeJson(opts: {data?: any, path?: string}): any {
         }
         data = JSON.parse(readFile(opts.path));
     } else {
-        data = {...opts.data};
+        data = isArray(opts.data) ? [...opts.data] : {...opts.data};
     }
     
-    const expandedData: any = {};
+    const expandedData: any = isArray(opts.data) ? [] : {};
 
     for (const [key, val] of entries(data)) {
         if (isString(val)) {
@@ -58,17 +58,17 @@ export function loadIncludeJson(opts: {data?: any, path?: string}): any {
                 const parts = val.slice(1).split(":");
                 switch (parts[0]) {
                     case "sub":
-                        if (exists(resolve(dirname(opts.path ?? "."), parts[1] ?? "$$NOPATH"))) {
-                            expandedData[key] = loadIncludeJson({path: resolve(dirname(opts.path ?? "."), parts[1] ?? "$$NOPATH")});
+                        if (exists(join(dirname(opts.path ?? "."), parts[1] ?? "$$NOPATH"))) {
+                            expandedData[key] = loadIncludeJson({path: join(dirname(opts.path ?? "."), parts[1] ?? "$$NOPATH")});
                         } else {
-                            throw Error(`Path ${parts[1] ?? "$$NOPATH"} (${resolve(dirname(opts.path ?? "."), parts[1] ?? "$$NOPATH")}) of $sub not found`);
+                            throw Error(`Path ${parts[1] ?? "$$NOPATH"} (${join(dirname(opts.path ?? "."), parts[1] ?? "$$NOPATH")}) of $sub not found`);
                         }
                         continue;
                     case "raw":
-                        if (exists(resolve(dirname(opts.path ?? "."), parts[1] ?? "$$NOPATH"))) {
-                            expandedData[key] = readFile(resolve(dirname(opts.path ?? "."), parts[1] ?? "$$NOPATH"));
+                        if (exists(join(dirname(opts.path ?? "."), parts[1] ?? "$$NOPATH"))) {
+                            expandedData[key] = readFile(join(dirname(opts.path ?? "."), parts[1] ?? "$$NOPATH"));
                         } else {
-                            throw Error(`Path ${parts[1] ?? "$$NOPATH"} (${resolve(dirname(opts.path ?? "."), parts[1] ?? "$$NOPATH")}) of $raw not found`);
+                            throw Error(`Path ${parts[1] ?? "$$NOPATH"} (${join(dirname(opts.path ?? "."), parts[1] ?? "$$NOPATH")}) of $raw not found`);
                         }
                         continue;
                     default:
@@ -77,10 +77,16 @@ export function loadIncludeJson(opts: {data?: any, path?: string}): any {
                 }
             }
         }
+        if (isArray(val)) {
+            expandedData[key] = loadIncludeJson({path: opts.path ?? ".", data: [...val]});
+            continue;
+        }
         if (isObject(val) && !isNumber(val) && !isString(val)) {
             expandedData[key] = loadIncludeJson({path: opts.path ?? ".", data: {...val}});
             continue;
         }
         expandedData[key] = val;
     }
+
+    return expandedData;
 }

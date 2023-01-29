@@ -94,9 +94,11 @@ export function ProjectsPage() {
                             </Typography>
                         </Paper>
                         <Paper className="recent-list" variant="outlined">
-                            {(conf.recent ?? []).filter(exists).map((p) => (
-                                <RecentItem path={p} key={p} />
-                            ))}
+                            <Stack spacing={1}>
+                                {(conf.recent ?? []).filter(exists).map((p) => (
+                                    <RecentItem path={p} key={p} />
+                                ))}
+                            </Stack>
                         </Paper>
                         <Stack className="inputs" spacing={1} direction="row">
                             <Tooltip
