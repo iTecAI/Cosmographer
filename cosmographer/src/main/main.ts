@@ -36,6 +36,7 @@ ipcMain.on(
         args: any[]
     ) => {
         try {
+            console.log(module, member, args);
             switch (module) {
                 case "fs":
                     if (member === "lstatSync") {
@@ -129,6 +130,8 @@ const createWindow = async () => {
             preload: app.isPackaged
                 ? path.join(__dirname, "preload.js")
                 : path.join(__dirname, "../../.erb/dll/preload.js"),
+            nodeIntegration: true,
+            nodeIntegrationInWorker: true
         },
     });
 

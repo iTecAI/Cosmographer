@@ -1,4 +1,5 @@
 import { CssBaseline, ThemeProvider } from "@mui/material";
+import { useEffect } from "react";
 import { MemoryRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.scss";
 import { CosmLayout } from "./pages/layout/layout";

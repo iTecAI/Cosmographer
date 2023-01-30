@@ -1,4 +1,5 @@
 import { contextBridge, ipcRenderer } from "electron";
+import * as fs from "fs/promises";
 
 const electronHandler = {
     expose: {
@@ -27,6 +28,7 @@ const electronHandler = {
         removeWatch(path: string) {
             ipcRenderer.removeAllListeners(`cosm-watch-update:${path}`);
         },
+        fs
     },
 };
 

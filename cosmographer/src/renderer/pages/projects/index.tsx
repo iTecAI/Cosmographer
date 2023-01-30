@@ -31,9 +31,12 @@ function RecentItem(props: { path: string }) {
     const theme = useTheme();
 
     useMemo(() => {
-        setName((conf as ProjectMeta).name);
-    }, [(conf as ProjectMeta).name]);
-
+        console.log(conf, props.path);
+        if ((conf as ProjectMeta).name !== name) {
+            console.log((conf as ProjectMeta).name);
+            setName((conf as ProjectMeta).name);
+        }
+    }, [conf, props.path]);
     return (
         <Paper
             className="recent-item"
@@ -54,7 +57,6 @@ function RecentItem(props: { path: string }) {
 
 export function ProjectsPage() {
     const t = useTranslation();
-    const theme = useTheme();
 
     const [loadDir, setLoadDir] = useState<string>("");
     const [loadStatus, setLoadStatus] = useState<

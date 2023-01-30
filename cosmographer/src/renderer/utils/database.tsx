@@ -38,7 +38,6 @@ export function DBContextProvider(props: {
     children: ReactNode | ReactNode[];
 }) {
     const [dbs, setDbs] = useState<{ [path: string]: [any, Low<any>] }>({});
-
     return (
         <DBContext.Provider
             value={[
@@ -49,29 +48,29 @@ export function DBContextProvider(props: {
                         newLow.read().then(() => {
                             if (!data) {
                                 setDbs({
-                                    ...dbs,
+                                    ...cloneDeep(dbs),
                                     [path]: [{ ...newLow.data }, newLow],
                                 });
                             } else {
-                                const newDbs = { ...dbs };
-                                newDbs[path] = [{ ...newLow.data }, newLow];
-                                merge(newDbs[path][0], data);
-                                newDbs[path][1].data = { ...newDbs[path][0] };
-                                newDbs[path][1].write().then(() => {
-                                    setDbs(newDbs);
+                                const newItem = [{ ...newLow.data }, newLow];
+                                merge(newItem[0], data);
+                                newItem[1].data = { ...newItem[0] };
+                                setDbs({
+                                    ...(cloneDeep(dbs) as any),
+                                    [path]: newItem,
                                 });
+                                newItem[1].write();
                             }
                         });
                     } else {
                         if (data) {
-                            const newDbs = cloneDeep(dbs);
-                            merge(newDbs[path][0], data);
-                            newDbs[path][1].data = { ...newDbs[path][0] };
-                            newDbs[path][1].write().then(() => {
-                                if (!isEqual(newDbs[path][0], dbs[path][0])) {
-                                    setDbs(newDbs);
-                                }
-                            });
+                            const newitem = cloneDeep(dbs[path]);
+                            merge(newitem[0], data);
+                            newitem[1].data = { ...newitem[0] };
+                            if (!isEqual(newitem[0], dbs[path][0])) {
+                                setDbs({ ...cloneDeep(dbs), [path]: newitem });
+                            }
+                            newitem[1].write();
                         }
                     }
                 },
@@ -82,14 +81,15 @@ export function DBContextProvider(props: {
     );
 }
 
-export function useDB<T>(
-    path: string
-): [T | {}, (update: any) => void] {
+export function useDB<T>(path: string): [T | {}, (update: any) => void] {
     const context = useContext(DBContext);
 
     useMemo(() => {
         context[1](path);
     }, [path]);
 
-    return [(context[0][path] ?? [{}])[0], (update) => context[1](path, update)]
+    return [
+        (context[0][path] ?? [{}])[0],
+        (update) => context[1](path, update),
+    ];
 }
