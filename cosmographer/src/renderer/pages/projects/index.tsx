@@ -24,11 +24,14 @@ import { MAX_RECENT, PROJECT_VERSION } from "renderer/globals";
 import { useDB } from "renderer/utils/database";
 import { ProjectMeta } from "renderer/types/project";
 import { UserSettingsMenu } from "renderer/components/settings/UserSettingsMenu";
+import { useGlobal } from "renderer/utils/globalState";
+import { useNavigate } from "react-router-dom";
 
 function RecentItem(props: { path: string }) {
     const [name, setName] = useState<string>("");
     const [conf] = useDB<ProjectMeta>(join(props.path, "meta.cosm.json"));
     const theme = useTheme();
+    const [project, setProject] = useGlobal("project");
 
     useMemo(() => {
         if ((conf as ProjectMeta).name !== name) {
@@ -46,7 +49,7 @@ function RecentItem(props: { path: string }) {
             <Typography variant="subtitle2" className="path">
                 {props.path}
             </Typography>
-            <IconButton className="open">
+            <IconButton className="open" onClick={() => setProject(props.path)}>
                 <MdOpenInNew size={20} />
             </IconButton>
         </Paper>
@@ -64,6 +67,8 @@ export function ProjectsPage() {
 
     const [conf, setConf] = useConfig();
     const [creating, setCreating] = useState<boolean>(false);
+    const [project, setProject] = useGlobal("project");
+    const nav = useNavigate();
 
     useEffect(() => {
         if (loadDir.length === 0) {
@@ -80,6 +85,12 @@ export function ProjectsPage() {
             setLoadStatus("error");
         }
     }, [loadDir]);
+
+    useEffect(() => {
+        if (project) {
+            nav("/proj");
+        }
+    }, [project]);
 
     return (
         <>
@@ -134,7 +145,9 @@ export function ProjectsPage() {
                                                         color="success"
                                                         size="small"
                                                         variant="contained"
-                                                        onClick={() => {}}
+                                                        onClick={() => {
+                                                            setProject(loadDir);
+                                                        }}
                                                     >
                                                         <MdCheck size={24} />
                                                     </Button>
@@ -219,6 +232,7 @@ export function ProjectsPage() {
                             }
                             setConf(newConf);
                         }
+                        setProject(join(parent, name));
                     }}
                 />
             </Box>
