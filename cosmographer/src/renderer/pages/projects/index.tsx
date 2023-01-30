@@ -31,9 +31,7 @@ function RecentItem(props: { path: string }) {
     const theme = useTheme();
 
     useMemo(() => {
-        console.log(conf, props.path);
         if ((conf as ProjectMeta).name !== name) {
-            console.log((conf as ProjectMeta).name);
             setName((conf as ProjectMeta).name);
         }
     }, [conf, props.path]);

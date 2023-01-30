@@ -36,7 +36,6 @@ ipcMain.on(
         args: any[]
     ) => {
         try {
-            console.log(module, member, args);
             switch (module) {
                 case "fs":
                     if (member === "lstatSync") {

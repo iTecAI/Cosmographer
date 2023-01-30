@@ -37,10 +37,10 @@ export function useConfig(): [
 ] {
     const [config, setConfig] = useContext(UserConfigContext);
 
-    useMemo(() => {
+    /*useMemo(() => {
         const defSet = defaultsDeep({...config}, DEFAULT_CONFIG);
         setConfig(defSet);
-    }, [])
+    }, [])*/
 
     return [config, setConfig];
 }
