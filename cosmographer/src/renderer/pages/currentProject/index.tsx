@@ -6,13 +6,15 @@ import { useGlobal } from "renderer/utils/globalState";
 import { Resizable } from "react-resizable";
 import "./style.scss";
 import "react-resizable/css/styles.css";
-import { MdDragIndicator } from "react-icons/md";
+import { MdCreate, MdDragIndicator } from "react-icons/md";
 import { CosmMenu } from "renderer/components/menu/MenuItem";
+import { useTranslation } from "renderer/utils/LocalizationProvider";
 
 export function CurrentProjectPage() {
     const [project, setProject] = useGlobal("project");
     const nav = useNavigate();
     const theme = useTheme();
+    const t = useTranslation();
 
     useEffect(() => {
         if (!project) {
@@ -35,12 +37,14 @@ export function CurrentProjectPage() {
                     <CosmMenu
                         items={[
                             {
-                                text: "test",
+                                text: t("editor.menu.file.new"),
+                                icon: <MdCreate size={20} />,
+                                keybind: ["meta", "n"],
                             },
                         ]}
                         trigger={(params) => (
-                            <Button {...params} className="control-menu">
-                                File
+                            <Button {...params} className="control-menu file">
+                                {t("editor.menu.file._button")}
                             </Button>
                         )}
                     />
@@ -50,6 +54,7 @@ export function CurrentProjectPage() {
                 axis="x"
                 minConstraints={[256, 0]}
                 maxConstraints={[720, 0]}
+                height={0}
                 width={sidebarWidth}
                 className="sidebar-container"
                 onResize={(e, data) => setSidebarWidth(data.size.width)}

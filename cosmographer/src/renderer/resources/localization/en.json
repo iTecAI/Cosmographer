@@ -34,5 +34,13 @@
     "settings": {
         "title": "Preferences",
         "setting-theme": "Dark Mode"
+    },
+    "editor": {
+        "menu": {
+            "file": {
+                "_button": "File",
+                "new": "New Project"
+            }
+        }
     }
 }
