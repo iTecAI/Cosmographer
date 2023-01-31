@@ -6,8 +6,14 @@ import { useGlobal } from "renderer/utils/globalState";
 import { Resizable } from "react-resizable";
 import "./style.scss";
 import "react-resizable/css/styles.css";
-import { MdCreate, MdDragIndicator } from "react-icons/md";
-import { CosmMenu } from "renderer/components/menu/MenuItem";
+import {
+    MdCreate,
+    MdDragIndicator,
+    MdExitToApp,
+    MdFolderOpen,
+    MdSave,
+} from "react-icons/md";
+import { CosmContextMenu, CosmMenu } from "renderer/components/menu/MenuItem";
 import { useTranslation } from "renderer/utils/LocalizationProvider";
 
 export function CurrentProjectPage() {
@@ -40,6 +46,22 @@ export function CurrentProjectPage() {
                                 text: t("editor.menu.file.new"),
                                 icon: <MdCreate size={20} />,
                                 keybind: ["meta", "n"],
+                            },
+                            {
+                                text: t("editor.menu.file.save"),
+                                icon: <MdSave size={20} />,
+                                keybind: ["meta", "s"],
+                            },
+                            {
+                                text: t("editor.menu.file.open"),
+                                icon: <MdFolderOpen size={20} />,
+                                keybind: ["meta", "o"],
+                            },
+                            {
+                                text: t("editor.menu.file.exit"),
+                                icon: <MdExitToApp size={20} />,
+                                keybind: ["meta", "shift", "q"],
+                                event: () => setProject(null),
                             },
                         ]}
                         trigger={(params) => (

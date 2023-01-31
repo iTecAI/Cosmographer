@@ -39,7 +39,10 @@
         "menu": {
             "file": {
                 "_button": "File",
-                "new": "New Project"
+                "new": "New Project",
+                "save": "Save Project",
+                "open": "Open Project",
+                "exit": "Exit Editor"
             }
         }
     }
