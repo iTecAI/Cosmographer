@@ -13,7 +13,15 @@ import {
     useTheme,
 } from "@mui/material";
 import { Stack } from "@mui/system";
-import { MdAdd, MdCheck, MdFolder, MdOpenInNew } from "react-icons/md";
+import {
+    MdAdd,
+    MdCheck,
+    MdClose,
+    MdFolder,
+    MdMinimize,
+    MdOpenInFull,
+    MdOpenInNew,
+} from "react-icons/md";
 import { useEffect, useMemo, useState } from "react";
 import { showOpenDialog } from "../../utils/ipc/dialog";
 import { exists, mkdir, writeFile } from "../../utils/ipc/fs";
@@ -26,6 +34,7 @@ import { ProjectMeta } from "renderer/types/project";
 import { UserSettingsMenu } from "renderer/components/settings/UserSettingsMenu";
 import { useGlobal } from "renderer/utils/globalState";
 import { useNavigate } from "react-router-dom";
+import { closeWindow } from "renderer/utils/ipc/other";
 
 function RecentItem(props: { path: string }) {
     const [name, setName] = useState<string>("");
@@ -91,10 +100,25 @@ export function ProjectsPage() {
             nav("/proj");
         }
     }, [project]);
-
     return (
         <>
             <UserSettingsMenu />
+            <Stack className="window-actions" direction="row" spacing={0.5}>
+                <IconButton className="minimize" size="large">
+                    <MdMinimize size={20} />
+                </IconButton>
+                <IconButton className="maximize" size="large">
+                    <MdOpenInFull size={20} />
+                </IconButton>
+                <IconButton
+                    className="close"
+                    color="error"
+                    size="large"
+                    onClick={() => closeWindow()}
+                >
+                    <MdClose size={20} />
+                </IconButton>
+            </Stack>
             <Box className="projects-page-root">
                 <Stack spacing={4}>
                     <img src={Icon} className="logo" />

@@ -1,6 +1,6 @@
 export const expose: {
-    call: (module: "fs" | "dialog" | "os", member: string, args?: any[]) => any;
-    get: (module: "fs" | "dialog" | "os", member: string) => any;
+    call: (module: "fs" | "dialog" | "os" | "other", member: string, args?: any[]) => any;
+    get: (module: "fs" | "dialog" | "os" | "other", member: string) => any;
     watch: (
         path: string,
         listener: (event: string, filename: string) => void
@@ -13,7 +13,7 @@ function isError(o: any): o is { error: Error } {
 }
 
 export function call(
-    module: "fs" | "dialog" | "os",
+    module: "fs" | "dialog" | "os" | "other",
     member: string,
     args?: any[]
 ): any {
@@ -24,7 +24,7 @@ export function call(
     return result;
 }
 
-export function get(module: "fs" | "dialog" | "os", member: string): any {
+export function get(module: "fs" | "dialog" | "os" | "other", member: string): any {
     const result = expose.get(module, member);
     if (isError(result)) {
         throw result.error;

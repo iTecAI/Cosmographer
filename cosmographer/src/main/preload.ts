@@ -3,7 +3,7 @@ import * as fs from "fs/promises";
 
 const electronHandler = {
     expose: {
-        call(module: "fs" | "dialog" | "os", member: string, args?: any[]) {
+        call(module: "fs" | "dialog" | "os" | "other", member: string, args?: any[]) {
             return ipcRenderer.sendSync(
                 "cosm-call",
                 module,
@@ -11,7 +11,7 @@ const electronHandler = {
                 args ?? []
             );
         },
-        get(module: "fs" | "dialog" | "os", member: string) {
+        get(module: "fs" | "dialog" | "os" | "other", member: string) {
             return ipcRenderer.sendSync("cosm-get", module, member);
         },
         watch(

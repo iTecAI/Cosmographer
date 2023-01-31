@@ -27,61 +27,6 @@ class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 
-ipcMain.on(
-    "cosm-call",
-    async (
-        event,
-        module: "fs" | "dialog" | "os",
-        member: string,
-        args: any[]
-    ) => {
-        try {
-            switch (module) {
-                case "fs":
-                    if (member === "lstatSync") {
-                        const result = (fs as any)[member](...args);
-                        result.directory = result.isDirectory();
-                        result.file = result.isFile();
-                        event.returnValue = result;
-                    } else {
-                        event.returnValue = (fs as any)[member](...args);
-                    }
-
-                case "dialog":
-                    event.returnValue = (dialog as any)[member](...args);
-                case "os":
-                    event.returnValue = (os as any)[member](...args);
-                default:
-                    event.returnValue = {
-                        error: `${module} is not recognized`,
-                    };
-            }
-        } catch (err) {
-            event.returnValue = { error: err };
-        }
-    }
-);
-
-ipcMain.on(
-    "cosm-get",
-    async (event, module: "fs" | "dialog", member: string) => {
-        try {
-            switch (module) {
-                case "fs":
-                    event.returnValue = (fs as any)[member];
-                case "dialog":
-                    event.returnValue = (dialog as any)[member];
-                default:
-                    event.returnValue = {
-                        error: `${module} is not recognized`,
-                    };
-            }
-        } catch (err) {
-            event.returnValue = { error: err };
-        }
-    }
-);
-
 if (process.env.NODE_ENV === "production") {
     const sourceMapSupport = require("source-map-support");
     sourceMapSupport.install();
@@ -151,8 +96,9 @@ const createWindow = async () => {
         mainWindow = null;
     });
 
-    const menuBuilder = new MenuBuilder(mainWindow);
-    menuBuilder.buildMenu();
+    /*const menuBuilder = new MenuBuilder(mainWindow);
+    menuBuilder.buildMenu();*/
+    mainWindow.menuBarVisible = false;
 
     // Open urls in the user's browser
     mainWindow.webContents.setWindowOpenHandler((edata) => {
@@ -175,6 +121,84 @@ const createWindow = async () => {
             }
         });
     });
+
+    const OTHER_CMDS: {[key: string]: (bwindow: BrowserWindow, ...args: any[]) => any} = {
+        "devtools": (bw) => bw.webContents.openDevTools(),
+        "close": (bw) => bw.close(),
+        "minimize": (bw) => bw.minimize(),
+        "maximize": (bw) => bw.maximize(),
+        "canMinimize": (bw) => bw.minimizable,
+        "canMaximize": (bw) => bw.maximizable
+    }
+
+    ipcMain.on(
+        "cosm-call",
+        async (
+            event,
+            module: "fs" | "dialog" | "os" | "other",
+            member: string,
+            args: any[]
+        ) => {
+            try {
+                switch (module) {
+                    case "fs":
+                        if (member === "lstatSync") {
+                            const result = (fs as any)[member](...args);
+                            result.directory = result.isDirectory();
+                            result.file = result.isFile();
+                            event.returnValue = result;
+                        } else {
+                            event.returnValue = (fs as any)[member](...args);
+                        }
+
+                    case "dialog":
+                        event.returnValue = (dialog as any)[member](...args);
+                    case "os":
+                        event.returnValue = (os as any)[member](...args);
+                    case "other":
+                        if (mainWindow) {
+                            event.returnValue = OTHER_CMDS[member](mainWindow, ...args);
+                        } else {
+                            event.returnValue = null;
+                        }
+                    default:
+                        event.returnValue = {
+                            error: `${module} is not recognized`,
+                        };
+                }
+            } catch (err) {
+                event.returnValue = { error: err };
+            }
+        }
+    );
+
+    ipcMain.on(
+        "cosm-get",
+        async (event, module: "fs" | "dialog" | "os" | "other", member: string) => {
+            try {
+                switch (module) {
+                    case "fs":
+                        event.returnValue = (fs as any)[member];
+                    case "dialog":
+                        event.returnValue = (dialog as any)[member];
+                    case "os":
+                        event.returnValue = (os as any)[member];
+                    case "other":
+                        if (mainWindow) {
+                            event.returnValue = OTHER_CMDS[member](mainWindow);
+                        } else {
+                            event.returnValue = null;
+                        }
+                    default:
+                        event.returnValue = {
+                            error: `${module} is not recognized`,
+                        };
+                }
+            } catch (err) {
+                event.returnValue = { error: err };
+            }
+        }
+    );
 };
 
 /**

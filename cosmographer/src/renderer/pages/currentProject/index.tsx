@@ -1,4 +1,4 @@
-import { AppBar, Button, Paper, Toolbar, useTheme } from "@mui/material";
+import { AppBar, Button, Paper, Stack, Toolbar, useTheme } from "@mui/material";
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -8,13 +8,16 @@ import "./style.scss";
 import "react-resizable/css/styles.css";
 import {
     MdCreate,
+    MdDeveloperMode,
     MdDragIndicator,
     MdExitToApp,
     MdFolderOpen,
     MdSave,
+    MdSettings,
 } from "react-icons/md";
 import { CosmContextMenu, CosmMenu } from "renderer/components/menu/MenuItem";
 import { useTranslation } from "renderer/utils/LocalizationProvider";
+import { devtools } from "renderer/utils/ipc/other";
 
 export function CurrentProjectPage() {
     const [project, setProject] = useGlobal("project");
@@ -33,12 +36,14 @@ export function CurrentProjectPage() {
     return (
         <Box className="project-page-layout">
             <AppBar className="controls">
-                <Box
+                <Stack
                     className="menus"
                     sx={{
                         width: `${sidebarWidth}px`,
                         borderRight: `1px solid ${theme.palette.divider}`,
                     }}
+                    direction="row"
+                    spacing={0}
                 >
                     <CosmMenu
                         items={[
@@ -70,7 +75,26 @@ export function CurrentProjectPage() {
                             </Button>
                         )}
                     />
-                </Box>
+                    <CosmMenu
+                        items={[
+                            {
+                                text: t("editor.menu.edit.settings"),
+                                icon: <MdSettings size={20} />,
+                            },
+                            {
+                                text: t("editor.menu.edit.devtools"),
+                                icon: <MdDeveloperMode size={20} />,
+                                keybind: ["meta", "shift", "i"],
+                                event: () => devtools(),
+                            },
+                        ]}
+                        trigger={(params) => (
+                            <Button {...params} className="control-menu edit">
+                                {t("editor.menu.edit._button")}
+                            </Button>
+                        )}
+                    />
+                </Stack>
             </AppBar>
             <Resizable
                 axis="x"

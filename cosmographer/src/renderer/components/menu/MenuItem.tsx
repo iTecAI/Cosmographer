@@ -141,7 +141,7 @@ export function CosmMenu(props: {
                 open={Boolean(anchor)}
                 onClose={() => setAnchor(null)}
                 anchorEl={anchor}
-                className="test"
+                className="cosm-menu-open"
                 sx={{
                     "& .MuiList-root": {
                         padding: "0px",
@@ -188,7 +188,7 @@ export function CosmContextMenu(props: {
                         ? { top: anchor[1] + 4, left: anchor[0] + 4 }
                         : undefined
                 }
-                className="test"
+                className="cosm-menu-open"
                 sx={{
                     "& .MuiList-root": {
                         padding: "0px",

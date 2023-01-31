@@ -43,6 +43,11 @@
                 "save": "Save Project",
                 "open": "Open Project",
                 "exit": "Exit Editor"
+            },
+            "edit": {
+                "_button": "Edit",
+                "settings": "Project Settings",
+                "devtools": "Developer Tools"
             }
         }
     }
