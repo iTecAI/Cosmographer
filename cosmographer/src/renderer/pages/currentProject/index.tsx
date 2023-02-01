@@ -1,4 +1,12 @@
-import { AppBar, Button, Paper, Stack, Toolbar, useTheme } from "@mui/material";
+import {
+    AppBar,
+    Button,
+    IconButton,
+    Paper,
+    Stack,
+    Toolbar,
+    useTheme,
+} from "@mui/material";
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -7,17 +15,25 @@ import { Resizable } from "react-resizable";
 import "./style.scss";
 import "react-resizable/css/styles.css";
 import {
+    MdClose,
     MdCreate,
     MdDeveloperMode,
     MdDragIndicator,
     MdExitToApp,
     MdFolderOpen,
+    MdMinimize,
+    MdOpenInFull,
     MdSave,
     MdSettings,
 } from "react-icons/md";
 import { CosmContextMenu, CosmMenu } from "renderer/components/menu/MenuItem";
 import { useTranslation } from "renderer/utils/LocalizationProvider";
-import { devtools } from "renderer/utils/ipc/other";
+import {
+    closeWindow,
+    devtools,
+    maximizeWindow,
+    minimizeWindow,
+} from "renderer/utils/ipc/other";
 
 export function CurrentProjectPage() {
     const [project, setProject] = useGlobal("project");
@@ -94,6 +110,30 @@ export function CurrentProjectPage() {
                             </Button>
                         )}
                     />
+                </Stack>
+                <Stack className="window-actions" direction="row" spacing={0.5}>
+                    <IconButton
+                        className="minimize"
+                        size="large"
+                        onClick={() => minimizeWindow()}
+                    >
+                        <MdMinimize size={20} />
+                    </IconButton>
+                    <IconButton
+                        className="maximize"
+                        size="large"
+                        onClick={() => maximizeWindow()}
+                    >
+                        <MdOpenInFull size={20} />
+                    </IconButton>
+                    <IconButton
+                        className="close"
+                        color="error"
+                        size="large"
+                        onClick={() => closeWindow()}
+                    >
+                        <MdClose size={20} />
+                    </IconButton>
                 </Stack>
             </AppBar>
             <Resizable

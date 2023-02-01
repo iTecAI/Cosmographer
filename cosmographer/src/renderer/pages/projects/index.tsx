@@ -34,7 +34,11 @@ import { ProjectMeta } from "renderer/types/project";
 import { UserSettingsMenu } from "renderer/components/settings/UserSettingsMenu";
 import { useGlobal } from "renderer/utils/globalState";
 import { useNavigate } from "react-router-dom";
-import { closeWindow } from "renderer/utils/ipc/other";
+import {
+    closeWindow,
+    maximizeWindow,
+    minimizeWindow,
+} from "renderer/utils/ipc/other";
 
 function RecentItem(props: { path: string }) {
     const [name, setName] = useState<string>("");
@@ -104,10 +108,18 @@ export function ProjectsPage() {
         <>
             <UserSettingsMenu />
             <Stack className="window-actions" direction="row" spacing={0.5}>
-                <IconButton className="minimize" size="large">
+                <IconButton
+                    className="minimize"
+                    size="large"
+                    onClick={() => minimizeWindow()}
+                >
                     <MdMinimize size={20} />
                 </IconButton>
-                <IconButton className="maximize" size="large">
+                <IconButton
+                    className="maximize"
+                    size="large"
+                    onClick={() => maximizeWindow()}
+                >
                     <MdOpenInFull size={20} />
                 </IconButton>
                 <IconButton
