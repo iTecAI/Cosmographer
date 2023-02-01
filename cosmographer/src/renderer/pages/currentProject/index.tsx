@@ -51,7 +51,10 @@ export function CurrentProjectPage() {
 
     return (
         <Box className="project-page-layout">
-            <AppBar className="controls">
+            <AppBar
+                className="controls"
+                sx={{ backgroundColor: theme.palette.background.paper }}
+            >
                 <Stack
                     className="menus"
                     sx={{
